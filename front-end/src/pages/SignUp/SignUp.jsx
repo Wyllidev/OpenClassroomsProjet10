@@ -48,6 +48,7 @@ export default function SignUp() {
 			setConfirmSuccess(true);
 			setSubmitSuccess(true);
 			setError(null);// Réinitialise les erreurs
+			document.getElementById("formsignup").reset();
 		} catch (err) {
 			console.error(err);
 			setError("Erreur lors de l'inscription");
@@ -60,7 +61,7 @@ export default function SignUp() {
 				<i className="fa fa-user-circle sign-in-icon"></i>
 				<h1>Sign Up</h1>
 				{/* Formulaire d'inscription */}
-				<form onSubmit={SignUp}>
+				<form onSubmit={SignUp} id="formsignup">
 					{/* Champ pour l'email */}
 					<TextInput
 						className="input-wrapper"

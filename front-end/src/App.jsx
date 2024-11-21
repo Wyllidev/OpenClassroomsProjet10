@@ -8,6 +8,7 @@ import User from './pages/User/User';
 import SignUp from './pages/SignUp/SignUp';
 
 export default function App() {
+    // Utilisation de useSelector pour accéder au token de l'utilisateur depuis le store Redux
     const token = useSelector(state => state.userAuth.token);
     return (
         <div>
@@ -15,6 +16,11 @@ export default function App() {
             <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/sign-in" element={<SignIn />} />
+                                {/* 
+                    Route pour la page utilisateur.
+                    Si le token est présent (utilisateur authentifié), affiche la page User.
+                    Sinon, redirige vers la page de connexion.
+                */}
                 <Route
                     path="/user"
                     element={token ? <User /> : <Navigate to="/sign-in" />}

@@ -7,6 +7,7 @@ import EditButton from "../../components/EditButton/EditButton"
 
 // Composant principal de la page utilisateur
 export default function User() {
+    console.log('text')
     // Récupération du token d'authentification depuis le store Redux
     const token = useSelector(state => state.userAuth.token)
     // Récupération des informations du profil depuis le store Redux
@@ -22,7 +23,7 @@ export default function User() {
             try {
                 // Requête vers l'API pour obtenir le profil de l'utilisateur
                 const response = await fetch("http://localhost:3001/api/v1/user/profile", {
-                method: "POST",
+                method: "GET",
                     headers: {
                         // Ajout du token pour l'authentification
                         "Authorization": `Bearer ${token}`
@@ -30,6 +31,7 @@ export default function User() {
                 })
                 // Conversion de la réponse en JSON
                 const data = await response.json()
+                console.log(data)
                 // Envoi des données du profil à Redux pour mise à jour du store
                 dispatch(setGetProfile({ data }))
             } catch (err) {
@@ -39,7 +41,7 @@ export default function User() {
         // Appel de la fonction pour récupérer les données de l'utilisateur
         fetchDataUser()
     }, [token])// Dépendance sur le token pour relancer useEffect si le token change
-
+console.log(profile)
     return (
 
         <main className="main bg-dark">

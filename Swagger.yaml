@@ -1,0 +1,165 @@
+swagger: '2.0'
+info:
+  title: Bank Argent API documentation
+  description: Contains all available API endpoints in this codebase
+  version: '1.0.0'
+  termsOfService: 'http://swagger.io/terms/'
+# L'adresse sur laquelle l’API est hébergée en local
+host: localhost:3001
+# Préfixe de base pour chaque route de l’API
+basePath: /api/v1
+# Indique que l’API utilise HTTP
+schemes:
+  - http
+paths:
+    # Visualiser toutes leurs transactions pour le mois en cours, groupées par compte
+    /bank/accounts/{account_id}/transactions:
+    get:
+      security:
+        # La sécurité est basée sur un token Bearer
+        - Bearer: []
+    # Tag pour organiser cette route dans la documentation Swagger, ici pour les clients de la banque
+      tags:
+        - Bank (Client)
+    # Résumé de la fonction de la route : 
+      summary: Get account transactions by Account Id
+      description: Get account transactions by Account Id
+      parameters:
+        - in: path
+        # Paramètre dans le chemin, représente l'identifiant du compte
+          name: account_id
+        # Description du paramètre
+          description: account id
+        # Paramètre est obligatoire pour accéder à cette route
+          required: true
+        # Le type attendu pour cet identifiant est une chaîne
+          type: string
+        - in: query
+        # Paramètre optionnel pour filtrer par mois
+          name: month
+        # Description du paramètre optionnel (permet de spécifier le mois des transactions)
+          description: Month of the transactions
+        # Ce paramètre est facultatif.
+          required: false
+        # Doit être un entier (valeurs entre 1 et 12 attendues)
+          type: integer
+        # Format standard pour les entiers.
+          format: int32
+        - in: query
+        # Paramètre optionnel pour filtrer par année
+          name: year
+          description: Year of the transactions
+          required: false
+          type: integer
+          format: int32
+         
+    # La réponse de l'API sera au format JSON
+      produces:
+        - application/json
+      responses:
+        # Indique un succès dans la récupération des transactions
+        '200':
+          description: Successfully get the account
+          schema:
+            # Utilise la définition "Transactions" pour structurer la réponse
+            $ref: '#/definitions/Transactions'
+        # Les champs fournis dans la requête sont invalides
+        '400':
+          description: Invalid Fields
+        # L'utilisateur n'est pas authentifié ou le token Bearer est invalide
+        '401':
+          description : Unauthorized  
+        # Une erreur interne s'est produite côté serveur
+        '500':
+          description: Internal Server Error
+    
+    # Visualiser les détails d'une transaction dans une autre vue
+    /bank/accounts/{account_id}/transactions/{transaction_id}:
+     get:
+    # La sécurité de la route est gérée avec un token Bearer
+    security:
+      - Bearer: []
+    # La route est associée au module "Bank (Client)" pour une meilleure organisation dans Swagger
+    tags:
+      - Bank (Client)
+    # Résumé de la fonctionnalité de la route
+    summary: Get transaction details by Transaction Id
+    # Description de l'utilité de la route (renvoyer les détails d'une transaction précise)
+    description: Retrieve details of a specific transaction by its ID.
+    # Définition des paramètres requis pour cette route
+    parameters:
+      - in: path
+        # Nom du paramètre représentant l'identifiant du compte
+        name: account_id
+        # Description de ce paramètre : identifiant du compte lié à la transaction
+        description: ID of the account containing the transaction
+        # Ce paramètre est obligatoire pour que la requête soit valide
+        required: true
+        # Le type attendu pour ce paramètre est une chaîne de caractères
+        type: string
+      - in: path
+        # Nom du paramètre représentant l'identifiant de la transaction
+        name: transaction_id
+        # Description de ce paramètre : identifiant de la transaction à consulter
+        description: ID of the transaction to view
+        # Ce paramètre est également obligatoire
+        required: true
+        # Le type attendu pour ce paramètre est une chaîne de caractères
+        type: string
+    # Indique le format de la réponse que cette route fournit (format JSON)
+    produces:
+      - application/json
+    # Définition des différentes réponses possibles de l'API
+    responses:
+      '200':
+        description: Successfully retrieved transaction details
+        schema:
+          $ref: '#/definitions/Transaction'
+      '404':
+        description: Transaction not found
+      '401':
+        description: Unauthorized
+      '500':
+        description: Internal Server Error
+
+        
+  # Ajouter, modifier ou supprimer des informations sur une transaction
+  /bank/accounts/{account_id}/transactions/{transaction_id}:
+    # Utilise la méthode PUT pour mettre à jour les détails d'une transaction existante
+    put:
+      security:
+        - Bearer: []
+      tags:
+        - Bank (Client)
+      summary: Modify transaction details
+      description: Update specific details of a transaction, such as adding or editing a note and assigning a category, for better organization and tracking
+      parameters:
+        - in: path
+          name: account_id
+          description: account id
+          required: true
+          type: string
+        - in: path
+          name: transaction_id
+          description: ID of the transaction to be updated 
+          required: true
+          type: string
+        - in: body
+          name: body
+          description: Containing the new details for the transaction
+          required: true
+          schema:
+            $ref: '#/definitions/UpdateTransaction'
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Transaction updated successully
+          schema:
+            $ref: '#/definitions/Transaction'
+        '404':
+          description: Not found
+        '401':
+          description : Unauthorized  
+        '500':
+          description: Internal Server Error
